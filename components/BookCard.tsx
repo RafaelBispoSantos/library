@@ -28,7 +28,7 @@ const BookCard = ({id, title, genre, color, cover, isloanedBook = false}: Book) 
             className='object-contain'/>
             <p>11 days left to return</p>
           </div>
-          <Button className="book-btn">
+          <Button className='book-btn'>
             Download receipt
           </Button>
         </div>
