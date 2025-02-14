@@ -7,7 +7,11 @@ const nextConfig: NextConfig = {
       protocol: "https",
       hostname: "phacehold.co",
       
-    },
+    },{
+      protocol: "https",
+      hostname: "ik.imagekit.io",
+      port: "",
+    }
   ],
   domains: ["m.media-amazon.com"],
  }
