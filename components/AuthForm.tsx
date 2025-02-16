@@ -26,6 +26,9 @@ import Link from "next/link";
 import ImageUpload from "./imageUpload";
 
 import { FIELD_NAMES, FIELD_TYPES } from "@/constants";
+import { CloudFog } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 interface Props<T extends FieldValues> {
   schema: ZodType<T>;
@@ -40,13 +43,33 @@ const AuthForm = <T extends FieldValues>({
   defaultValues,
   onSubmit,
 }: Props<T>) => {
+  const router = useRouter();
   const isSignIn = type === "SIGN_IN";
+
   const form: UseFormReturn<T> = useForm({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
-  const handleSubmit: SubmitHandler<T> = async (data) => {};
+  const handleSubmit: SubmitHandler<T> = async (data) => {
+    const result = await onSubmit(data);
+    if (result.success) {
+      toast({
+        title: "Success",
+        description: isSignIn
+          ? "You have successfully signed in"
+          : "You have successfully signed up",
+      });
+
+      router.push("/");
+    }else{
+      toast({
+        title:`Errror${isSignIn ? "signin  in ": "signup up"}`,
+        description: result.error ?? "An errorr occurred while signing in",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -72,8 +95,7 @@ const AuthForm = <T extends FieldValues>({
                   </FormLabel>
                   <FormControl>
                     {field.name === "universityCard" ? (
-                      <ImageUpload onFileChange={field.onChange}
-                       />
+                      <ImageUpload onFileChange={field.onChange} />
                     ) : (
                       <Input
                         required
@@ -85,14 +107,16 @@ const AuthForm = <T extends FieldValues>({
                       />
                     )}
                   </FormControl>
-                  
+
                   <FormMessage />
                 </FormItem>
               )}
             />
           ))}
 
-          <Button type="submit" className="form-btn">{isSignIn ? "Sign in" : "Sign Up"}</Button>
+          <Button type="submit" className="form-btn">
+            {isSignIn ? "Sign in" : "Sign Up"}
+          </Button>
         </form>
       </Form>
       <p className="text-center text-base font-medium">
